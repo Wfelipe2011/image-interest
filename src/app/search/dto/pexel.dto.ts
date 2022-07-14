@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 export interface IPhotoPixel {
     id: number;
     width: number;
@@ -23,5 +22,7 @@ interface Src {
     landscape: string;
     tiny: string;
 }
+
+
 
 

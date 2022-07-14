@@ -1,9 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import axios from 'axios';
-import { IPhotoPixel } from './dto/pexel';
-import { IPhoto } from './dto/photo';
-import { IPhotoUnsplash } from './dto/unsplash';
-
+import { IPhotoPixel } from './dto/pexel.dto';
+import { IPhoto } from './dto/photo.dto';
+import { IPhotoUnsplash } from './dto/unsplash.dto';
+import { shuffle } from './entities/shuffle.entity';
+import { PexelMapper } from './mapper/pexel.mapper';
+import { UnsplashMapper } from './mapper/unsplash.mapper';
 @Injectable()
 export class SearchService {
   private currentPage: number;
@@ -14,43 +16,8 @@ export class SearchService {
     this.currentPage = params.page || 1;
     const dataUnsplash = await this.unsplashApi(params.search);
     const dataPexels = await this.pexelsApi(params.search);
-
-    const photos: IPhoto[] = [];
-
-    for (const unsplash of dataUnsplash) {
-      photos.push({
-        id: unsplash.id,
-        origin: 'unsplash',
-        description: unsplash.description,
-        title: unsplash.alt_description,
-        color: unsplash.color,
-        urls: {
-          full: unsplash.urls.full,
-          medium: unsplash.urls.regular,
-          small: unsplash.urls.small,
-          link: unsplash.links.self,
-        },
-        userName: unsplash.user.name,
-      });
-    }
-
-    for (const pexels of dataPexels) {
-      photos.push({
-        id: String(pexels.id),
-        origin: 'pexels',
-        description: '',
-        title: pexels.alt,
-        color: pexels.avg_color,
-        urls: {
-          full: pexels.src.original,
-          medium: pexels.src.medium,
-          small: pexels.src.small,
-          link: pexels.url,
-        },
-        userName: pexels.photographer,
-      });
-    }
-    return photos;
+    const photos = PexelMapper.mapper(dataPexels).concat(UnsplashMapper.mapper(dataUnsplash))
+    return shuffle<IPhoto>(photos);
   }
 
   private async unsplashApi(search: string): Promise<IPhotoUnsplash[]> {

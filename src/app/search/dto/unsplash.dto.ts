@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 export interface Source {
     ancestry: Ancestry;
     title: string;
