@@ -9,6 +9,8 @@ interface IUrls {
 export interface IPhoto {
     description: string;
     title: string
+    width: number;
+    height: number;
     id: string;
     color: string
     urls: IUrls;

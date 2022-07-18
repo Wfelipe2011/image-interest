@@ -9,6 +9,8 @@ export class PexelMapper {
                 id: String(pexels.id),
                 origin: 'pexels',
                 description: '',
+                width: pexels.width,
+                height: pexels.height,
                 title: pexels.alt,
                 color: pexels.avg_color,
                 urls: {

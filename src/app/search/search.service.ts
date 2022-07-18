@@ -6,6 +6,7 @@ import { IPhotoUnsplash } from './dto/unsplash.dto';
 import { shuffle } from './entities/shuffle.entity';
 import { PexelMapper } from './mapper/pexel.mapper';
 import { UnsplashMapper } from './mapper/unsplash.mapper';
+import { logger } from 'skyot';
 @Injectable()
 export class SearchService {
   private currentPage: number;
@@ -21,23 +22,37 @@ export class SearchService {
   }
 
   private async unsplashApi(search: string): Promise<IPhotoUnsplash[]> {
-    let url = `https://api.unsplash.com/photos?page=${this.currentPage}&client_id=${this.unsplashKey}`;
-    if (search)
-      url = `https://api.unsplash.com/search/photos?page=${this.currentPage}&client_id=${this.unsplashKey}&query=${search}`;
+    try {
+      let url = `https://api.unsplash.com/photos?page=${this.currentPage}&client_id=${this.unsplashKey}`;
+      if (search)
+        url = `https://api.unsplash.com/search/photos?page=${this.currentPage}&client_id=${this.unsplashKey}&query=${search}`;
 
-    const response = await axios.get(url);
-    return !search ? response.data : response.data.results;
+      const response = await axios.get(url);
+      return !search ? response.data : response.data.results;
+    } catch (error) {
+      logger(error)
+      return []
+    }
+
   }
 
   private async pexelsApi(search: string): Promise<IPhotoPixel[]> {
-    let url = `https://api.pexels.com/v1/search`;
-    if (search) url += `?query=${search}&page=${this.currentPage}`;
-    url += `&per_page=10`;
-    const response = await axios.get(url, {
-      headers: {
-        Authorization: this.pexelsKey,
-      },
-    });
-    return response.data.photos;
+    try {
+      let url = `https://api.pexels.com/v1/search`;
+      if (search) url += `?query=${search}&page=${this.currentPage}`;
+      url += `&per_page=10`;
+      const response = await axios.get(url, {
+        headers: {
+          Authorization: this.pexelsKey,
+        },
+      });
+      return response.data.photos;
+    } catch (error) {
+      logger(error)
+      return []
+    }
+
   }
+
 }
+

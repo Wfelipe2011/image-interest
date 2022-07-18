@@ -10,6 +10,8 @@ export class UnsplashMapper {
                 id: unsplash.id,
                 origin: 'unsplash',
                 description: unsplash.description,
+                width: unsplash.width,
+                height: unsplash.height,
                 title: unsplash.alt_description,
                 color: unsplash.color,
                 urls: {
